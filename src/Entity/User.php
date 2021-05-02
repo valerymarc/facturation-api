@@ -16,7 +16,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity("email", message="Un utilisateur ayant cet email existe déjà !")
- * @ApiResource
+ * @ApiResource(
+ * normalizationContext={"groups"={"users_read"}}
+ * )
  */
 class User implements UserInterface
 {
@@ -24,7 +26,7 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"clients_read", "factures_read"})
+     * @Groups({"clients_read", "factures_read", "users_read"})
      */
     private $id;
 
@@ -38,7 +40,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"clients_read", "factures_read"})
+     * @Groups({"clients_read", "factures_read", "users_read"})
      */
     private $roles = [];
 
@@ -51,7 +53,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"clients_read", "factures_read"})
+     * @Groups({"clients_read", "factures_read", "users_read"})
      * @Assert\NotBlank(message="Renseignez le prénom")
      * @Assert\Length(
      * min=3, 
@@ -64,7 +66,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"clients_read", "factures_read"})
+     * @Groups({"clients_read", "factures_read", "users_read"})
      * @Assert\NotBlank(message="Renseignez le nom de famille")
      * @Assert\Length(
      * min=3,
