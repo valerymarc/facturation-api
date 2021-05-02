@@ -7,14 +7,21 @@ use App\Repository\ClientRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
  * @ApiResource(
+ * collectionOperations={"GET", "POST"},
+ * itemOperations={"GET", "PUT", "DELETE"},
+ * subresourceOperations={
+ *   "factures_get_subresource"={"path"="/clients/{id}/factures"}
+ * },
  * normalizationContext={
  * "groups"={"clients_read"}
  * }
@@ -35,18 +42,34 @@ class Client
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"clients_read", "factures_read"})
+     * @Assert\NotBlank(message="Le prénom du client est obligatoire")
+     * @Assert\Length(
+     * min=3,
+     * max=255,
+     * minMessage="Le prénom doit contenir au moins {{ limit }} caractères",
+     * maxMessage="Le prénom ne doit pas dépasser {{ limit }} caractères"
+     * )
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"clients_read", "factures_read"})
+     * @Assert\NotBlank(message="Le nom de famille du client est obligatoire")
+     * @Assert\Length(
+     * min=3,
+     * max=255,
+     * minMessage="Le nom de famille du client doit contenir au moins {{ limit }} caractères",
+     * maxMessage="Le nom de famille du client  ne doit pas dépasser {{ limit }} caractères"
+     * )
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"clients_read", "factures_read"})
+     * @Assert\NotBlank(message="L'adresse email du client est obligatoire")
+     * @Assert\Email(message="L'adresse {{ value }} n'est pas un email valide")
      */
     private $email;
 
@@ -59,18 +82,46 @@ class Client
     /**
      * @ORM\OneToMany(targetEntity=Facture::class, mappedBy="client")
      * @Groups({"clients_read"})
+     * @ApiSubresource
      */
     private $factures;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="clients")
-     * @Groups({"clients_read", "factures_read"})
+     * @Groups({"clients_read"})
+     * @Assert\NotBlank(message="Vous devez indiquer un utilisateur")
      */
     private $user;
 
     public function __construct()
     {
         $this->factures = new ArrayCollection();
+    }
+
+
+    /**
+     * Fonction permettant de retourner le montant total des factures d'un client
+     * @Groups({"clients_read"})
+     * @return float
+     */
+    public function getTotalMontant():float
+    {
+        return array_reduce($this->factures->toArray(), function ($total, $facture){
+           return $total + $facture->getMontant();
+        }, 0);
+    }
+
+
+    /**
+     * Récupérer le montant total non payé (hors factures payé ou annulé)
+     * @Groups({"clients_read"})
+     * @return float
+     */
+    public function getMontantImpaye():float
+    {
+        return array_reduce($this->factures->toArray(), function($total, $facture){
+           return $total + ($facture->getStatut() === "PAYE" || $facture->getStatut() === "ANNULE" ? 0 : $facture->getMontant());
+        }, 0);
     }
 
     public function getId(): ?int

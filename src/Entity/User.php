@@ -8,10 +8,14 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity("email", message="Un utilisateur ayant cet email existe déjà !")
  * @ApiResource
  */
 class User implements UserInterface
@@ -27,6 +31,8 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Groups({"clients_read", "factures_read"})
+     * @Assert\NotBlank(message="Renseignez l'email de l'utilisateur")
+     * @Assert\Email(message="L'email '{{ value }}' n'est pas valide")
      */
     private $email;
 
@@ -39,18 +45,33 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Veuillez saisir un mot de passe valide")
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"clients_read", "factures_read"})
+     * @Assert\NotBlank(message="Renseignez le prénom")
+     * @Assert\Length(
+     * min=3, 
+     * max=255,
+     * minMessage="Le prénom doit contenir au moins {{ limit }} caractères",
+     * maxMessage="Le prénom ne doit pas dépasser {{ limit }} caractères"
+     * )
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"clients_read", "factures_read"})
+     * @Assert\NotBlank(message="Renseignez le nom de famille")
+     * @Assert\Length(
+     * min=3,
+     * max=255,
+     * minMessage="Le nom de famille doit contenir au moins {{ limit }} caractères",
+     * maxMessage="Le nom de famille ne doit pas dépasser {{ limit }} caractères"
+     * )
      */
     private $lastname;
 
