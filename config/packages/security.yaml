@@ -51,6 +51,6 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY}
-        - { path: ^/api/clients, roles: IS_AUTHENTICATED_FULLY}
+        - { path: ^/api/clients, roles: IS_AUTHENTICATED_ANONYMOUSLY}
         - { path: ^/api/factures, roles: IS_AUTHENTICATED_FULLY}
         - { path: ^/api/users, roles: IS_AUTHENTICATED_FULLY, methods:[GET, PUT, DELETE]}
