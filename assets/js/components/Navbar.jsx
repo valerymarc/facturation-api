@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { NavLink } from 'react-router-dom';
+import AuthAPI from '../services/authAPI';
+import AuthContext from '../contexts/AuthContext';
 
-const Navbar = () => {
+const Navbar = ({history}) => {
+   
+   const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
+
+  // Déconnexion
+    const handleLogout = () =>{
+        AuthAPI.logout();
+        setIsAuthenticated(false);
+        history.replace("/login");
+    }
+
+  
     return ( <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a className="navbar-brand" href="#">PRESTA</a>
+    <NavLink className="navbar-brand" to="#">PRESTA</NavLink>
     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
       <span className="navbar-toggler-icon"></span>
     </button>
@@ -10,40 +24,41 @@ const Navbar = () => {
     <div className="collapse navbar-collapse" id="navbarColor02">
       <ul className="navbar-nav mr-auto">
         <li className="nav-item active">
-          <a className="nav-link" href="#">Accueil
+          <NavLink className="nav-link" to="#">Accueil
             <span className="sr-only">(current)</span>
-          </a>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <a className="nav-link" href="#">Clients</a>
+          <NavLink className="nav-link" to="/clients">Clients</NavLink>
         </li>
         <li className="nav-item">
-          <a className="nav-link" href="#">Factures</a>
+          <NavLink className="nav-link" to="factures">Factures</NavLink>
         </li>
         
         <li className="nav-item dropdown">
-          <a className="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+          <NavLink className="nav-link dropdown-toggle" data-toggle="dropdown" to="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</NavLink>
           <div className="dropdown-menu">
-            <a className="dropdown-item" href="#">Action</a>
-            <a className="dropdown-item" href="#">Another action</a>
-            <a className="dropdown-item" href="#">Something else here</a>
+            <NavLink className="dropdown-item" to="#">Action</NavLink>
+            <NavLink className="dropdown-item" to="#">Another action</NavLink>
+            <NavLink className="dropdown-item" to="#">Something else here</NavLink>
             <div className="dropdown-divider"></div>
-            <a className="dropdown-item" href="#">Separated link</a>
+            <NavLink className="dropdown-item" to="#">Separated link</NavLink>
           </div>
         </li>
       </ul>
       <ul className="navbar-nav ml-auto">
-        <li className="nav-item">
-            <a href="#" className="btn btn-light">Créer un compte</a>
+       {(!isAuthenticated && (<>  <li className="nav-item">
+            <NavLink to="#" className="btn btn-light">Créer un compte</NavLink>
         </li>
         &nbsp;&nbsp;
         <li className="nav-item">
-            <a href="#" className="btn btn-primary">S'identifier</a>
+            <NavLink to="/login" className="btn btn-primary">S'identifier</NavLink>
         </li>
-        &nbsp;&nbsp;
-        <li className="nav-item">
-            <a href="#" className="btn btn-danger">Se deconnecter</a>
-        </li>
+        &nbsp;&nbsp; </>))  || (
+           <li className="nav-item">
+           <button onClick={handleLogout} className="btn btn-danger">Se deconnecter</button>
+       </li>
+        )} 
       </ul>
     </div>
   </nav> );

@@ -3,6 +3,6 @@ body {
     
 }
 
-#search{
+#search, #username, #password{
     width: 50%;
 }
