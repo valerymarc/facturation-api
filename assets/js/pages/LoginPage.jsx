@@ -1,7 +1,8 @@
-import axios from "axios";
 import React, { useContext, useState } from 'react';
-import AuthAPI from '../services/authAPI';
+import Field from '../components/forms/Field';
 import AuthContext from '../contexts/AuthContext';
+import AuthAPI from '../services/authAPI';
+import { Link } from 'react-router-dom';
 
 const LoginPage = ({history}) => {
     console.log(history);
@@ -41,30 +42,28 @@ const LoginPage = ({history}) => {
     <h1>Page de connexion</h1>
    <br/>
     <form action="" onSubmit={handleSubmit}>
+        <Field name="username" 
+               label="Adresse email"
+               value={credentials.username}
+               onChange={handleChange}
+               placeholder="Adresse email de connexion"
+               type="email"
+               error={error} 
+               />
+        
+        <Field name="password"
+               label="Mot de passe"
+               value={credentials.password}
+               onChange={handleChange}
+               type="password"
+               error=""
+               />
+
+        
         <div className="form-group">
-            <label htmlFor="username">Adresse email</label>
-            <input  
-             value={credentials.username} 
-             onChange={handleChange}
-             type="email" 
-             id="username" 
-             className={"form-control" + (error && " is-invalid")} 
-             placeholder="Adresse email de connexion" 
-             name="username"/>
-             {error && <p className="invalid-feedback">{error}</p>}
-        </div>
-        <div className="form-group">
-            <label htmlFor="password">Mot de passe</label>
-            <input 
-              value={credentials.password}
-              onChange={handleChange} 
-              type="password" 
-              id="password" 
-              className="form-control" 
-              placeholder="Mot de passe" 
-              name="password"/>
-        </div>
-        <div className="form-group"><button type="submit" className="btn btn-success">Se connecter</button></div>
+            <button type="submit" className="btn btn-success">Se connecter</button>
+            <Link to="/register" className="btn btn-link">Créez votre compte ici</Link>
+            </div>
     </form>
     </> );
 }

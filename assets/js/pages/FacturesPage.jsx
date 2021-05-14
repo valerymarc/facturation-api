@@ -4,6 +4,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import Pagination from '../components/Pagination';
 import facturesAPI from '../services/facturesAPI';
+import { Link } from 'react-router-dom';
 
 
 const STATUT_CLASSE = {
@@ -113,9 +114,12 @@ const FacturesPage = () => {
 
     return ( <>
  
-
-
+   <div className="mb-3 d-flex justify-content-between align-items-center">
     <h1>Gestion des factures</h1>
+    <Link to="/factures/new" className="btn btn-success">Nouvelle facture</Link>
+    </div>
+
+    
     <br/>
      <div className="form-group">
          <input type="text" onChange={handleSearch} id="search" value={search} className="form-control" placeholder="Rechercher une facture..."/>
@@ -142,7 +146,7 @@ const FacturesPage = () => {
                 </td>
                 <td className="text-center">{facture.montant} €</td>
                 <td className="text-center">
-                    <button className="btn-sm btn-warning">Edit</button>&nbsp;&nbsp;
+                    <Link to={"/factures/"+facture.id} className="btn-sm btn-warning">Editer</Link>&nbsp;&nbsp;
                     <button className="btn-sm btn-danger" onClick={() => handleConfirm(facture.id)}>Delete</button>
                 </td>
             </tr>)}

@@ -6,9 +6,12 @@ import './bootstrap';
 import Navbar from './js/components/Navbar';
 import PrivateRoute from './js/components/PrivateRoute';
 import AuthContext from './js/contexts/AuthContext';
+import ClientFormPage from './js/pages/ClientFormPage';
 import ClientsPage from './js/pages/ClientsPage';
+import FactureFormPage from './js/pages/FactureFormPage';
 import FacturesPage from './js/pages/FacturesPage';
 import HomePage from './js/pages/HomePage';
+import InscriptionPage from './js/pages/InscriptionPage';
 import LoginPage from './js/pages/LoginPage';
 import AuthAPI from './js/services/authAPI';
 /*
@@ -46,9 +49,13 @@ const contextValue = {
      <main className="container pt-5">
          <Switch>
             <Route path="/login" component={LoginPage} /> 
+            <Route path="/register" component={InscriptionPage} /> 
+            <PrivateRoute path="/factures/:id" component={FactureFormPage} />
             <PrivateRoute path="/factures"  component={FacturesPage} /> 
+            <PrivateRoute path="/clients/:id" component={ClientFormPage}/>
             <PrivateRoute path="/clients" component={ClientsPage} />
-            <Route path="/" component={HomePage}/>
+         
+            <PrivateRoute path="/" component={HomePage}/>
              
          </Switch>
       

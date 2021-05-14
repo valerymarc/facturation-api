@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Pagination from '../components/Pagination';
 import clientsAPI from '../services/clientsAPI';
 import {confirmAlert} from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+
 
 const ClientsPage = () => {
 
@@ -96,7 +98,11 @@ try{
      //Pagination des données 
      const paginatedClients = Pagination.getData(filteredClients, currentPage, itemPerPage);
     return ( <>
+    <div className="mb-3 d-flex justify-content-between align-items-center">
     <h1>Bienvenue sur les clients</h1>
+    <Link to="/clients/new" className="btn btn-success">Nouveau client</Link>
+    </div>
+    
     <br/>
      <div className="form-group">
          <input type="text" onChange={handleSearch} id="search" value={search} className="form-control" placeholder="Trouver un client ..."/>

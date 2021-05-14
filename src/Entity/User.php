@@ -54,26 +54,26 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"clients_read", "factures_read", "users_read"})
-     * @Assert\NotBlank(message="Renseignez le prénom")
      * @Assert\Length(
      * min=3, 
      * max=255,
      * minMessage="Le prénom doit contenir au moins {{ limit }} caractères",
      * maxMessage="Le prénom ne doit pas dépasser {{ limit }} caractères"
      * )
+     * @Assert\NotBlank(message="Renseignez le prénom")
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"clients_read", "factures_read", "users_read"})
-     * @Assert\NotBlank(message="Renseignez le nom de famille")
      * @Assert\Length(
      * min=3,
      * max=255,
      * minMessage="Le nom de famille doit contenir au moins {{ limit }} caractères",
      * maxMessage="Le nom de famille ne doit pas dépasser {{ limit }} caractères"
      * )
+     * @Assert\NotBlank(message="Renseignez le nom de famille")
      */
     private $lastname;
 

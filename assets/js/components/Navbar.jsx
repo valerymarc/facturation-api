@@ -2,6 +2,8 @@ import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import AuthAPI from '../services/authAPI';
 import AuthContext from '../contexts/AuthContext';
+import {confirmAlert} from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const Navbar = ({history}) => {
    
@@ -14,6 +16,25 @@ const Navbar = ({history}) => {
         history.replace("/login");
     }
 
+    //Confirmation de deconnexion
+    const vide = () =>{};
+     const handleConfirm = async () =>{
+         await confirmAlert({
+             title: 'Déconnexion',
+             message: 'Etes vous sûr(e) de vouloir quitter ?',
+             buttons:[
+                 {
+                     label:'Oui',
+                     onClick: ()=> handleLogout()
+                 },
+                 {
+                  label:'Non',
+                  onClick: ()=> vide()
+                 }
+             ] 
+         });
+     }
+
   
     return ( <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
     <NavLink className="navbar-brand" to="#">PRESTA</NavLink>
@@ -24,7 +45,7 @@ const Navbar = ({history}) => {
     <div className="collapse navbar-collapse" id="navbarColor02">
       <ul className="navbar-nav mr-auto">
         <li className="nav-item active">
-          <NavLink className="nav-link" to="#">Accueil
+          <NavLink className="nav-link" to="/">Accueil
             <span className="sr-only">(current)</span>
           </NavLink>
         </li>
@@ -32,7 +53,7 @@ const Navbar = ({history}) => {
           <NavLink className="nav-link" to="/clients">Clients</NavLink>
         </li>
         <li className="nav-item">
-          <NavLink className="nav-link" to="factures">Factures</NavLink>
+          <NavLink className="nav-link" to="/factures">Factures</NavLink>
         </li>
         
         <li className="nav-item dropdown">
@@ -48,7 +69,7 @@ const Navbar = ({history}) => {
       </ul>
       <ul className="navbar-nav ml-auto">
        {(!isAuthenticated && (<>  <li className="nav-item">
-            <NavLink to="#" className="btn btn-light">Créer un compte</NavLink>
+            <NavLink to="/register" className="btn btn-light">Créer un compte</NavLink>
         </li>
         &nbsp;&nbsp;
         <li className="nav-item">
@@ -56,7 +77,7 @@ const Navbar = ({history}) => {
         </li>
         &nbsp;&nbsp; </>))  || (
            <li className="nav-item">
-           <button onClick={handleLogout} className="btn btn-danger">Se deconnecter</button>
+           <button onClick={handleConfirm} className="btn btn-danger">Se deconnecter</button>
        </li>
         )} 
       </ul>
