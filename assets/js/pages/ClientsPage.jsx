@@ -4,6 +4,8 @@ import Pagination from '../components/Pagination';
 import clientsAPI from '../services/clientsAPI';
 import {confirmAlert} from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { toast } from 'react-toastify';
+import TableLoader from '../components/loaders/TableLoader';
 
 
 const ClientsPage = () => {
@@ -11,13 +13,17 @@ const ClientsPage = () => {
     const [clients, setClients] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("");
+    const [load, setLoad] = useState(true);
 
+    //Récuperer les clients
     const fetchClients = async () =>{
         try{
           const data = await clientsAPI.findAll();
           setClients(data);
+          setLoad(false);
         }catch(error){
             error => console.log(error.response)
+            toast.error("Impossible de charger les clients");
         }
     }
 
@@ -38,9 +44,11 @@ const ClientsPage = () => {
 //Première façon de faire une requete de delete
 try{
     await clientsAPI.delete(id)
+    toast.success("Le client "+id+" a bien été supprimé");
 }catch(error){
     setClients(originalClients);
     console.log(error.response);
+    toast.error("Une erreur est survnue !");
 }
 
 //Deuxième facon de faire une requete (traitement de promesse)
@@ -119,12 +127,12 @@ try{
                 <th className="text-center">Actions</th>
             </tr>
         </thead>
-        { filteredClients.length === 0 ? <h5 className="text-center">Désolé ce client n'existe pas </h5> :
-        <tbody>
+        
+        {!load && <tbody>
             {paginatedClients.map(client =>(
                 <tr key={client.id}>
                     <td>{client.id}</td>
-                    <td><a href="#">{client.prenom} {client.nom}</a></td>
+                    <td><Link to={"/clients/"+client.id}>{client.prenom} {client.nom}</Link></td>
                     <td>{client.email}</td>
                     <td>{client.company}</td>
                     <td className="text-center">
@@ -132,6 +140,7 @@ try{
                     </td>
                     <td className="text-center">{client.totalMontant.toLocaleString()} €</td>
                     <td>
+                    <Link to={"/clients/"+client.id} className="btn btn-warning">Editer</Link>&nbsp;&nbsp;
                         <button 
                         onClick={() => handleConfirm(client.id)} 
                         disabled={client.factures.length > 0 && " active"} 
@@ -140,8 +149,10 @@ try{
                 </tr>
             ))}
         </tbody>
-         }  
+       }   
     </table>
+
+    {load && <TableLoader />}
     
     {itemPerPage < filteredClients.length && <Pagination currentPage={currentPage} itemPerPage={itemPerPage} length={filteredClients.length} onPageChange={handlePageChange} />}
 

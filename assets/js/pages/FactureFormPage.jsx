@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Field from '../components/forms/Field';
 import Select from '../components/forms/Select';
-import { Link } from 'react-router-dom';
+import FormContentLoader from '../components/loaders/FormContentLoader';
 import ClientAPI from '../services/clientsAPI';
-import axios from 'axios';
 import FactureAPI from '../services/facturesAPI';
 
 
@@ -26,11 +27,14 @@ const FactureFormPage = ({match, history}) => {
         statut: ""
     });
 
+    const [load, setLoad] = useState(true);
+
     //Récupération de la liste de clients
     const fetchClient = async () =>{
         try{
           const data =  await ClientAPI.findAll();
           setClients(data);
+          setLoad(false);
 
         if(!facture.client){
             setFacture({...facture, client: data[0].id});
@@ -38,6 +42,7 @@ const FactureFormPage = ({match, history}) => {
 
         }catch(error){
             console.log(error.response);
+            toast.error("Impossible de charger les clients")
         }
     }
 
@@ -49,8 +54,11 @@ const FactureFormPage = ({match, history}) => {
            const {montant, statut, client} = data
 
            setFacture({montant, statut, client: client.id});
+           setLoad(false);
         }catch(error){
             //Flash notification erreur
+            toast.error("Erreur lors du chargement de la factures !");
+
             history.replace("/factures");
             console.log(error.response)
         }
@@ -83,10 +91,12 @@ const FactureFormPage = ({match, history}) => {
            if(edit){
             await FactureAPI.update(id, facture);
             //Flash de notification succes
+            toast.success("La facture a bien été modifiée !");
         
            }else{
             await FactureAPI.create(facture);
             //Flash de notification succes
+            toast.success("La facture a bien été crée !");
            }
            
            history.replace("/factures");
@@ -100,13 +110,15 @@ const FactureFormPage = ({match, history}) => {
                 });
                 setErrors(apiErrors);
                 //Flash de notification d'érreur
+                toast.error("Des erreurs dans votre formulaire !");
             }
         }
     }
 
     return ( <>
     {(edit && <h1>Modification de facture</h1>) || (<h1>Création d'une nouvelle facture</h1>)}
-    <form onSubmit={handleSubmit}> 
+    {load && <FormContentLoader />}
+    {!load && <form onSubmit={handleSubmit}> 
        <Field name="montant" 
               label="Montant"
               type="number"
@@ -140,7 +152,7 @@ const FactureFormPage = ({match, history}) => {
             <Link to="/factures" className="btn btn-link">Retour à la liste</Link>
         </div>
     </form>
-    
+      }
 
     </> );
 }

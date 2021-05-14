@@ -4,6 +4,7 @@ import AuthAPI from '../services/authAPI';
 import AuthContext from '../contexts/AuthContext';
 import {confirmAlert} from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { toast } from 'react-toastify';
 
 const Navbar = ({history}) => {
    
@@ -13,6 +14,7 @@ const Navbar = ({history}) => {
     const handleLogout = () =>{
         AuthAPI.logout();
         setIsAuthenticated(false);
+        toast.info("Vous êtes désormais déconnecté ! ");
         history.replace("/login");
     }
 

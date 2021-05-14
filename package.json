@@ -22,7 +22,9 @@
         "moment": "^2.29.1",
         "react": "^16.8.6",
         "react-confirm-alert": "^2.7.0",
+        "react-content-loader": "^6.0.3",
         "react-dom": "^16.8.6",
-        "react-router-dom": "^5.0.0"
+        "react-router-dom": "^5.0.0",
+        "react-toastify": "^7.0.4"
     }
 }

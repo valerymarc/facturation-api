@@ -5,6 +5,8 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import Pagination from '../components/Pagination';
 import facturesAPI from '../services/facturesAPI';
 import { Link } from 'react-router-dom';
+import { toast } from "react-toastify";
+import TableLoader from "../components/loaders/TableLoader";
 
 
 const STATUT_CLASSE = {
@@ -24,14 +26,17 @@ const FacturesPage = () => {
     const [factures, setFactures] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("");
+    const [load, setLoad] = useState(true);
 
     //Lister les factures (charger les données au chargement de la page)
     const fetchFactures = async () =>{
      try{
        const data = await facturesAPI.findAll();
        setFactures(data);
+       setLoad(false);
      }catch(error){
-        error => console.log(error.response)
+        error => console.log(error.response);
+        toast.error("Erreur lors du chargement des factures !");
      }
     };
 
@@ -42,7 +47,7 @@ const FacturesPage = () => {
     
     //Suppression d'une facture
 
-    const handleDelete = async id =>{
+    const handleDelete = async (id, chrono) =>{
         //Copie du tableau de facture
         const originalFactures = [...factures];
 
@@ -55,25 +60,27 @@ const FacturesPage = () => {
         try{
           //appel de la requete API
           await facturesAPI.delete(id)
+          toast.success("La facture "+chrono+" a bien été supprimée");
         }catch(error){
             //Remise à jour du jour du tableau initial de facture en cas d'erreur
             setFactures(originalFactures);
             //Recuperation de l'erreur sur la console
             console.log(error.response)
+            toast.error("Une erreru est survenue !");
         }
 
     }
 
     //Confirmation de la suppression d'une facture
     const vide = () =>{};
-    const handleConfirm = async id =>{
+    const handleConfirm = async (id, chrono) =>{
         await confirmAlert({
-            title: 'Suppression de la facture '+id,
+            title: 'Suppression de la facture '+chrono,
             message: 'Etes vous sûr(e) de vouloir supprimer cette facture ?',
             buttons:[
                 {
                     label:'Oui',
-                    onClick: ()=> handleDelete(id)
+                    onClick: ()=> handleDelete(id, chrono)
                 },
                 {
                  label:'Non',
@@ -135,11 +142,11 @@ const FacturesPage = () => {
                 <th className="text-center">Actions</th>
             </tr>
         </thead>
-       { filteredFactures.length === 0 ? <h5 className="text-center">Désolé cette facture est inexistante</h5> :
-        <tbody>
+       
+        {!load && <tbody>
             {paginatedFactures.map(facture => <tr key={facture.id} >
                 <td>{facture.chrono}</td>
-                <td><a href="#">{facture.client.prenom} {facture.client.nom}</a></td>
+                <td><Link to={"/clients/"+facture.client.id}>{facture.client.prenom} {facture.client.nom}</Link></td>
                 <td className="text-center">{formater(facture.sentAt)}</td>
                 <td className="text-center"> 
                     <span className={"badge badge-" + STATUT_CLASSE[facture.statut]}>{STATUT_NAME[facture.statut]}</span>
@@ -147,13 +154,15 @@ const FacturesPage = () => {
                 <td className="text-center">{facture.montant} €</td>
                 <td className="text-center">
                     <Link to={"/factures/"+facture.id} className="btn-sm btn-warning">Editer</Link>&nbsp;&nbsp;
-                    <button className="btn-sm btn-danger" onClick={() => handleConfirm(facture.id)}>Delete</button>
+                    <button className="btn-sm btn-danger" onClick={() => handleConfirm(facture.id, facture.chrono)}>Delete</button>
                 </td>
             </tr>)}
             
         </tbody>
-        } 
+         }
     </table>
+
+   {load && <TableLoader/>}
 
     {filteredFactures.length >itemPerPage && <Pagination currentPage={currentPage} itemPerPage={itemPerPage} length={filteredFactures.length} onPageChange={handlePageChange} />}
 

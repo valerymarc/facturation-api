@@ -3,6 +3,7 @@ import Field from '../components/forms/Field';
 import AuthContext from '../contexts/AuthContext';
 import AuthAPI from '../services/authAPI';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const LoginPage = ({history}) => {
     console.log(history);
@@ -29,10 +30,12 @@ const LoginPage = ({history}) => {
          await AuthAPI.authenticate(credentials);
          setError("");
          setIsAuthenticated(true);
+         toast.success("Bienvenue sur le site de presta");
          history.replace("/");
         }catch(error){
             console.log(error.response);
             setError("Aucun compte ne possède cette adresse");
+            toast.error("Une erreur est survenue !");
         }
 
         console.log(credentials);

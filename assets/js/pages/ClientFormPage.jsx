@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Field from '../components/forms/Field';
+import FormContentLoader from '../components/loaders/FormContentLoader';
 import ClientAPI from '../services/clientsAPI';
 import clientsAPI from '../services/clientsAPI';
 
@@ -25,6 +27,8 @@ const ClientFormPage = ({match, history}) => {
         company: ""
     });
 
+    const [load, setLoad] = useState(false);
+
     //Gestion des changement des inputs dans le formulaire
     const handleChange = ({currentTarget}) =>{
         const {name, value} = currentTarget;
@@ -36,9 +40,12 @@ const ClientFormPage = ({match, history}) => {
         try{
             const {prenom, nom, email, company}  = await ClientAPI.find(id);
             setClient({prenom, nom, email, company});
+            setLoad(false);
         }catch(error){
             console.log(error.response);
             //Notifiction de flash d'une erreur
+            toast.error("Impossble de charger le client demandé !");
+
             history.replace("/clients");
         }
         
@@ -49,6 +56,7 @@ const ClientFormPage = ({match, history}) => {
     //Chargement du client si besoin au chargement du composant ou au changement de l'identifiant
    useEffect(()=> {
        if(id !=="new"){
+        setLoad(true);
         setEdit(true);
         fetchClient(id);
        } 
@@ -61,9 +69,11 @@ const ClientFormPage = ({match, history}) => {
             if(edit){
                 await clientsAPI.update(id, client);
                 //Flash de notification de succes
+                toast.success("Le client "+id+" a bien été modifié");
             }else{
                 await ClientAPI.create(client);
                 //Flash de notification de succes
+                toast.success("Le client a bien été crée !");
             }
             history.replace("/clients");
            
@@ -79,6 +89,7 @@ const ClientFormPage = ({match, history}) => {
                });
                setError(apiErrors);
                //Flash de notification d'érreur
+               toast.error("Des erreurs dans le formulaire !");
            }
          }
          console.log(client);
@@ -86,7 +97,8 @@ const ClientFormPage = ({match, history}) => {
 
     return ( <>
     {(!edit && <h1>Création d'un nouveau client</h1>) || (<h1>Modification du client</h1>)}
-    <form onSubmit={handleSubmit}>
+    {load && <FormContentLoader />}
+    {!load && <form onSubmit={handleSubmit}>
         <Field name="prenom" 
                label="Prénom" 
                value={client.prenom} 
@@ -117,7 +129,7 @@ const ClientFormPage = ({match, history}) => {
             <Link to="/clients" className="btn btn-link">Retour à la liste</Link>
         </div>
 
-    </form>
+    </form>}
     </> );
 }
  

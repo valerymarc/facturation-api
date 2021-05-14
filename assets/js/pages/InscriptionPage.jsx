@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Field from '../components/forms/Field';
 import UserAPI from '../services/usersAPI';
 
@@ -36,19 +37,21 @@ const InscriptionPage = ({history}) => {
         if(user.password !== user.passwordConfirm){
             apiErrors.passwordConfirm="Vos mots de passe ne concordent pas";
             setErrors(apiErrors);
+            toast.error("Vous avez des erreurs dans votre formulaire !");
             return;
         }
 
         if(user.passwordConfirm===null){
             apiErrors.passwordConfirm="Confirmez votre mot de passe"; 
             setErrors(apiErrors);
+            toast.error("Vous avez des erreurs dans votre formulaire !");
             return;
         }
 
         try{
           const response = await UserAPI.register(user);
           setErrors({});
-          //Notfication Flash succes
+          toast.success("Vous pouvez désormais vous connecter !");
           history.replace("/login");
           console.log(response);
         }catch(error){
@@ -60,8 +63,9 @@ const InscriptionPage = ({history}) => {
                    apiErrors[violation.propertyPath] = violation.message;
                 });
                 setErrors(apiErrors);
+                toast.error("Vous avez des erreurs dans votre formulaire !");
             }
-            //Notification Flash erreur
+            toast.error("Une erreur est survenue lors de l'inscription !");
         }
     };
 
