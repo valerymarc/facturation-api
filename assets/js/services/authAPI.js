@@ -1,6 +1,7 @@
 import axios from "axios";
 import clientsAPI from "./clientsAPI";
 import jwtDecode from "jwt-decode";
+import { LOGIN_API } from "../config";
 
 /**
  * Positionne le token JWT sur Axios
@@ -28,7 +29,7 @@ function logout()
  */
 function authenticate(credentials)
 {
-    return axios.post("http://localhost:8000/api/login_check", credentials)
+    return axios.post(LOGIN_API, credentials)
     .then(response => response.data.token)
     .then(token => {
         //Stockage du token dans le localStorage

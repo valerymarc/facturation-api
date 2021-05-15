@@ -147,6 +147,8 @@ const FactureFormPage = ({match, history}) => {
 
         </Select>
 
+       
+
         <div className="form-group">
             <button type="submit" className="btn btn-success">Enregistrer</button>
             <Link to="/factures" className="btn btn-link">Retour à la liste</Link>

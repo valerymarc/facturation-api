@@ -140,11 +140,11 @@ try{
                     </td>
                     <td className="text-center">{client.totalMontant.toLocaleString()} €</td>
                     <td>
-                    <Link to={"/clients/"+client.id} className="btn btn-warning">Editer</Link>&nbsp;&nbsp;
+                    <Link to={"/clients/"+client.id} className="btn-sm btn-warning">Editer</Link>&nbsp;&nbsp;
                         <button 
                         onClick={() => handleConfirm(client.id)} 
                         disabled={client.factures.length > 0 && " active"} 
-                        className="btn btn-danger">Delete</button>
+                        className="btn-sm btn-danger">Delete</button>
                     </td>
                 </tr>
             ))}
