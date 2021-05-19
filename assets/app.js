@@ -16,6 +16,8 @@ import HomePage from './js/pages/HomePage';
 import InscriptionPage from './js/pages/InscriptionPage';
 import LoginPage from './js/pages/LoginPage';
 import AuthAPI from './js/services/authAPI';
+
+
 /*
  * Welcome to your app's main JavaScript file!
  *

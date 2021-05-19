@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 
 const HomePage = () => {
     return (<div className="jumbotron">
@@ -10,6 +10,8 @@ const HomePage = () => {
     <p className="lead">
       <a className="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
     </p>
+
+   
   </div> );
 }
  
